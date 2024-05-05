@@ -1,18 +1,32 @@
 import { View, Text, Image, TextInput, KeyboardAvoidingView, ScrollView, Touchable, TouchableOpacity } from 'react-native'
-import React, { useEffect } from 'react'
-import { useRoute } from '@react-navigation/native'
+import React, { useEffect, useState } from 'react'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import Colors from '../../Utils/Colors';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function PreviewScreen() {
 
     const params = useRoute().params
+    const navigation = useNavigation()
+    const [description, setDescription] = useState()
 
     useEffect(() => {
         console.log(params)
     }, []);
+
+    const publishHandler = () => {
+
+    }
+
     return (
         <KeyboardAvoidingView style={{ backgroundColor: Colors.WHILE, flex: 1 }}>
             <ScrollView style={{ padding: 20 }}>
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={{ display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 20 }}>
+                    <Ionicons name="arrow-back-circle" size={44} color="black" />
+                    <Text style={{ fontFamily: 'outfit', fontSize: 20 }}>Back</Text>
+                </TouchableOpacity>
                 <View style={{
                     alignItems: 'center',
                     marginTop: 100
@@ -32,6 +46,7 @@ export default function PreviewScreen() {
                     <TextInput
                         numberOfLines={3}
                         placeholder='Description'
+                        onChangeText={(value) => setDescription(value)}
                         style={{
                             borderWidth: 1,
                             width: '100%',
