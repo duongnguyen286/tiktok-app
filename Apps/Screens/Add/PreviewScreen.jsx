@@ -3,19 +3,47 @@ import React, { useEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import Colors from '../../Utils/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { s3bucket } from '../../Utils/S3BucketConfig';
 
 export default function PreviewScreen() {
 
     const params = useRoute().params
-    const navigation = useNavigation()
-    const [description, setDescription] = useState()
+    const navigation = useNavigation();
+    const [description, setDescription] = useState();
+    const [videoUrl, setVideoUrl] = useState();
 
     useEffect(() => {
         console.log(params)
     }, []);
 
-    const publishHandler = () => {
+    const publishHandler = async () => {
+        await UploadFileToAws(params.video, 'video');
+        await UploadFileToAws(params.thumbnail, 'image');
+    }
 
+    const UploadFileToAws = async (file, type) => {
+        const fileType = file.split('.').pop(); // Ví dụ: .mp4, .png, .jpg
+        const params = {
+            Bucket: 'tiktok-app',
+            Key: `duongnguyen286-${Date.now()}.${fileType}`, // ex:duongnguyen286-1714921588254.mp4
+            Body: await fetch(file).then(resp => resp.blob()),
+            ACL: 'public-read',
+            ContentType: type == 'video' ? `video/${fileType}` : 'image/${fileType}'
+        }
+        try {
+            const data = await s3bucket.upload(params)
+                .promise().then(resp => {
+                    console.log("File Upload...");
+                    console.log("RESP", resp?.Location);
+                    if (type == 'video') {
+                        setVideoUrl(resp?.Location)
+                    } else {
+                        console.log(resp.Location, videoUrl)
+                    }
+                })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     return (
@@ -57,6 +85,7 @@ export default function PreviewScreen() {
                         }}
                     />
                     <TouchableOpacity
+                        onPress={publishHandler}
                         style={{
                             backgroundColor: Colors.BLACK,
                             padding: 10,
