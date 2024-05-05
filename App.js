@@ -2,6 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { useFonts } from 'expo-font';
 import LoginScreen from './Apps/Screens/LoginScreen/LoginScreen';
+import HomeScreen from './Apps/Screens/Home/HomeScreen';
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
 
 
 export default function App() {
@@ -12,9 +14,16 @@ export default function App() {
   });
 
   return (
-    <View style={styles.container}>
-      <LoginScreen />
-    </View>
+    <ClerkProvider publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+      <View style={styles.container}>
+        <SignedIn>
+          <HomeScreen />
+        </SignedIn>
+        <SignedOut>
+          <LoginScreen />
+        </SignedOut>
+      </View>
+    </ClerkProvider>
   );
 }
 

@@ -9,13 +9,16 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "expo": "~50.0.17",
-    "expo-status-bar": "~1.11.1",
-    "react": "18.2.0",
-    "react-native": "0.73.6",
+    "@clerk/clerk-expo": "^0.20.16",
+    "expo": "~50.0.14",
+    "expo-av": "~13.10.5",
     "expo-font": "~11.10.3",
-    "expo-av": "~13.10.6",
-    "expo-image": "~1.10.6"
+    "expo-image": "~1.10.6",
+    "expo-status-bar": "~1.11.1",
+    "expo-web-browser": "~12.8.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-native": "0.73.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

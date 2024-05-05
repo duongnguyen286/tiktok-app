@@ -3,9 +3,31 @@ import React from 'react'
 import { Video, ResizeMode } from 'expo-av';
 import { Image } from 'expo-image';
 import Colors from '../../Utils/Colors';
+import * as WebBrowser from "expo-web-browser";
+import { useWarmUpBrowser } from '../../hooks/useWarmUpBrowser';
+import { useOAuth } from '@clerk/clerk-expo';
 
-
+WebBrowser.maybeCompleteAuthSession();
 export default function LoginScreen() {
+    useWarmUpBrowser;
+
+    const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+
+    const onPress = React.useCallback(async () => {
+        try {
+            const { createdSessionId, signIn, signUp, setActive } =
+                await startOAuthFlow();
+
+            if (createdSessionId) {
+                setActive({ session: createdSessionId });
+            } else {
+                // Use signIn or signUp for next steps such as MFA
+            }
+        } catch (err) {
+            console.error("OAuth error", err);
+        }
+    }, []);
+
     return (
         <View style={{ flex: 1 }}>
             {/* <Video
@@ -41,7 +63,7 @@ export default function LoginScreen() {
                 }}>Ứng dụng video ngắn</Text>
 
                 <TouchableOpacity
-                    onPress={() => console.log('Button Click')}
+                    onPress={onPress}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
