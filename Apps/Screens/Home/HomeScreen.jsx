@@ -9,11 +9,17 @@ import { FlatList } from 'react-native';
 export default function HomeScreen() {
     const { user } = useUser();
     const [videoList, setVideoList] = useState([])
+    const [loading, setLoading] = useState(false)//Lam moi du lieu
+    const [loadCount, setLoadCount] = useState(0)
 
     useEffect(() => {
         user && updateProfileImage();
-        GetLatestVideoList();
+        setLoadCount(0)
     }, [user])
+
+    useEffect(() => {
+        GetLatestVideoList();
+    }, [loadCount])
 
     const updateProfileImage = async () => {
         const { data, error } = await supabase
@@ -26,19 +32,24 @@ export default function HomeScreen() {
     }
 
     const GetLatestVideoList = async () => {
+        setLoading(true)
         const { data, error } = await supabase
             .from('PostList')
             .select('*,Users(username, name, profileImage)')
-            .range(0, 9);
-        setVideoList(data);
+            .range(loadCount, loadCount + 7)
+            .order('id', { ascending: false })
+        setVideoList(videoList => [...videoList, ...data]);
         console.log(data)
         console.log(">>>", error)
+        if (data) {
+            setLoading(false)
+        }
     }
-
+    console.log(loadCount)
 
 
     return (
-        <View style={{ padding: 50 }}>
+        <View style={{ padding: 30, paddingTop: 35 }}>
             <View style={{
                 display: 'flex', flexDirection: 'row',
                 justifyContent: 'space-between', alignItems: 'center'
@@ -51,6 +62,11 @@ export default function HomeScreen() {
             <View>
                 <FlatList
                     data={videoList}
+                    numColumns={2}
+                    style={{ display: 'flex' }}
+                    onRefresh={GetLatestVideoList}
+                    refreshing={loading}
+                    onEndReached={() => setLoadCount(loadCount + 7)}
                     renderItem={({ item, index }) => (
                         <VideoThumbnailItem video={item} />
                     )}
