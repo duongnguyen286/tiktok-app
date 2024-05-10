@@ -1,17 +1,19 @@
-import { View, Text, StyleSheet, Dimensions, Image } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Image, Touchable } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { Video, ResizeMode } from 'expo-av';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import Colors from '../../Utils/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
-export default function PlayVideoListItem({ video, activeIndex, index }) {
+export default function PlayVideoListItem({ video, activeIndex, index, userLikeHandler }) {
     const videoRef = useRef(null);
     const [status, setStatus] = useState({});
     const BottomTabHeight = useBottomTabBarHeight();
 
     // const ScreenHeight = Dimensions.get('window').height - BottomTabHeight;
     const ScreenHeight = Dimensions.get('window').height;
+
 
     return (
         <View >
@@ -45,7 +47,10 @@ export default function PlayVideoListItem({ video, activeIndex, index }) {
                     }}>{video.description}</Text>
                 </View>
                 <View style={{ display: 'flex', gap: 15 }}>
-                    <Ionicons name="heart-outline" size={40} color="white" />
+                    <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
+                        <Ionicons name="heart-outline" size={40} color="white" />
+                    </TouchableHighlight>
+
                     <Ionicons name="chatbubble-outline" size={35} color="white" />
                     <Ionicons name="paper-plane-outline" size={35} color="white" />
                 </View>

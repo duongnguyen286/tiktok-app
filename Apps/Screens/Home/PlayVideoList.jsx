@@ -6,6 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from './../../Utils/SupabaseConfig'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useUser } from '@clerk/clerk-expo';
 
 
 export default function PlayVideoList() {
@@ -14,6 +15,7 @@ export default function PlayVideoList() {
     const navigation = useNavigation()
     const [loading, setLoading] = useState();
     const [currentVideoIndex, setcurrentVideoIndex] = useState();
+    const { user } = useUser()
     const WindowHeight = Dimensions.get('window').height;
     const BottomTabHeight = useBottomTabBarHeight();
 
@@ -36,6 +38,20 @@ export default function PlayVideoList() {
             setLoading(false)
         }
     }
+
+    const userLikeHandler = async (videoPost, isLike) => {
+        if (!isLike) {
+            const { data, error } = await supabase
+                .from('VideoLikes')
+                .insert([{
+                    postIdRef: videoPost.id,
+                    userEmail: user.primaryEmailAddress.emailAddress
+                }])
+            console.log(error, data)
+            GetLatestVideoList()
+        }
+    }
+
     console.log("dữ liệu>>>", videoList)
     console.log("Length của videoList>>>", videoList.length)
     return (
@@ -56,7 +72,9 @@ export default function PlayVideoList() {
                 renderItem={({ item, index }) => (
                     <PlayVideoListItem video={item} key={index}
                         index={index}
-                        activeIndex={currentVideoIndex} />
+                        activeIndex={currentVideoIndex}
+                        userLikeHandler={userLikeHandler}
+                    />
                 )}
             />
         </View>
