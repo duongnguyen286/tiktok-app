@@ -6,13 +6,17 @@ import Colors from '../../Utils/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
-export default function PlayVideoListItem({ video, activeIndex, index, userLikeHandler }) {
+export default function PlayVideoListItem({ video, activeIndex, index, userLikeHandler, user }) {
     const videoRef = useRef(null);
     const [status, setStatus] = useState({});
     const BottomTabHeight = useBottomTabBarHeight();
 
     // const ScreenHeight = Dimensions.get('window').height - BottomTabHeight;
     const ScreenHeight = Dimensions.get('window').height;
+    const checkIsUserAlreadyLike = () => {
+        const result = video.VideoLikes?.find(item => item.userEmail == user.primaryEmailAddress.emailAddress)
+        return result
+    }
 
 
     return (
@@ -47,9 +51,15 @@ export default function PlayVideoListItem({ video, activeIndex, index, userLikeH
                     }}>{video.description}</Text>
                 </View>
                 <View style={{ display: 'flex', gap: 15 }}>
-                    <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
-                        <Ionicons name="heart-outline" size={40} color="white" />
-                    </TouchableHighlight>
+                    {checkIsUserAlreadyLike() ?
+                        <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
+                            <Ionicons name="heart" size={40} color="white" />
+                        </TouchableHighlight>
+                        :
+                        <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
+                            <Ionicons name="heart-outline" size={40} color="white" />
+                        </TouchableHighlight>
+                    }
 
                     <Ionicons name="chatbubble-outline" size={35} color="white" />
                     <Ionicons name="paper-plane-outline" size={35} color="white" />

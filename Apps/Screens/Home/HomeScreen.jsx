@@ -45,7 +45,7 @@ export default function HomeScreen() {
             setLoading(false)
         }
     }
-    console.log(loadCount)
+    // console.log(loadCount)
 
 
     return (

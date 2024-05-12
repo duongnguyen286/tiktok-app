@@ -29,11 +29,11 @@ export default function PlayVideoList() {
         setLoading(true)
         const { data, error } = await supabase
             .from('PostList')
-            .select('*,Users(username, name, profileImage)')
+            .select('*,Users(username, name, profileImage),VideoLikes(postIdRef, userEmail)')
             .range(0, 7)
             .order('id', { ascending: false })
         setVideoList(videoList => [...videoList, ...data]);
-
+        console.log(data)
         if (data) {
             setLoading(false)
         }
@@ -47,13 +47,15 @@ export default function PlayVideoList() {
                     postIdRef: videoPost.id,
                     userEmail: user.primaryEmailAddress.emailAddress
                 }])
-            console.log(error, data)
+            // console.log(error, data)
             GetLatestVideoList()
         }
     }
 
-    console.log("dữ liệu>>>", videoList)
-    console.log("Length của videoList>>>", videoList.length)
+
+
+    // console.log("dữ liệu>>>", videoList)
+    // console.log("Length của videoList>>>", videoList.length)
     return (
         <View>
             <TouchableOpacity style={{ position: 'absolute', zIndex: 10, padding: 20, paddingTop: 50 }}
@@ -74,6 +76,7 @@ export default function PlayVideoList() {
                         index={index}
                         activeIndex={currentVideoIndex}
                         userLikeHandler={userLikeHandler}
+                        user={user}
                     />
                 )}
             />
