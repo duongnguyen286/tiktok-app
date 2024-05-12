@@ -4,22 +4,34 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import Colors from '../../Utils/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { s3bucket } from '../../Utils/S3BucketConfig';
+import { supabase } from './../../Utils/SupabaseConfig';
+import { useUser } from '@clerk/clerk-expo'
 
 export default function PreviewScreen() {
+    const { user } = useUser()
 
     const params = useRoute().params
     const navigation = useNavigation();
-    const [description, setDescription] = useState();
-    const [videoUrl, setVideoUrl] = useState();
+    const [description, setDescription] = useState('');
+    const [videoUrl, setVideoUrl] = useState('');
+    const [thumbnailUrl, setThumbnailUrl] = useState('');
 
     useEffect(() => {
         console.log(params)
     }, []);
 
     const publishHandler = async () => {
-        await UploadFileToAws(params.video, 'video');
-        await UploadFileToAws(params.thumbnail, 'image');
+        const videoUrl = await UploadFileToAws(params.video, 'video');
+        const thumbnailUrl = await UploadFileToAws(params.thumbnail, 'image');
+        if (videoUrl && thumbnailUrl) {
+            // Thêm thông tin vào cơ sở dữ liệu Supabase
+            await addToSupabaseDB(videoUrl, thumbnailUrl, description, user?.primaryEmailAddress?.emailAddress);
+        } else {
+            console.log("Error uploading video or thumbnail");
+        }
     }
+
+
 
     const UploadFileToAws = async (file, type) => {
         const fileType = file.split('.').pop(); // Ví dụ: .mp4, .png, .jpg
@@ -31,18 +43,32 @@ export default function PreviewScreen() {
             ContentType: type == 'video' ? `video/${fileType}` : 'image/${fileType}'
         }
         try {
-            const data = await s3bucket.upload(params)
-                .promise().then(resp => {
-                    console.log("File Upload...");
-                    console.log("RESP", resp?.Location);
-                    if (type == 'video') {
-                        setVideoUrl(resp?.Location)
-                    } else {
-                        console.log(resp.Location, videoUrl)
-                    }
-                })
+            const data = await s3bucket.upload(params).promise();
+            console.log("File Upload...");
+            console.log("RESP", data?.Location);
+            if (type == 'video') {
+                setVideoUrl(data?.Location); // Cập nhật videoUrl
+                return data?.Location;
+            } else {
+                setThumbnailUrl(data?.Location); // Cập nhật thumbnailUrl
+                return data?.Location;
+            }
         } catch (e) {
-            console.log(e)
+            console.log(e);
+            return null;
+        }
+    }
+
+    const addToSupabaseDB = async (videoUrl, thumbnailUrl, description, emailRef) => {
+        // Thêm thông tin vào cơ sở dữ liệu của Supabase
+        const { data, error } = await supabase.from('PostList').insert([
+            { videoUrl: videoUrl, thumbnail: thumbnailUrl, description: description, emailRef: emailRef }
+        ]);
+        if (error) {
+            console.error("Error adding to Supabase:", error);
+            throw new Error("Error adding to Supabase");
+        } else {
+            console.log("Added to Supabase:", data);
         }
     }
 

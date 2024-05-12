@@ -67,8 +67,11 @@ export default function HomeScreen() {
                     onRefresh={GetLatestVideoList}
                     refreshing={loading}
                     onEndReached={() => setLoadCount(loadCount + 7)}
+                    onEndReachedThreshold={0.2}
                     renderItem={({ item, index }) => (
-                        <VideoThumbnailItem video={item} />
+                        <VideoThumbnailItem video={item}
+                            refreshData={console.log}
+                        />
                     )}
                 />
             </View>

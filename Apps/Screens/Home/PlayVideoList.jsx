@@ -26,18 +26,28 @@ export default function PlayVideoList() {
     }, [])
 
     const GetLatestVideoList = async () => {
-        setLoading(true)
-        const { data, error } = await supabase
-            .from('PostList')
-            .select('*,Users(username, name, profileImage),VideoLikes(postIdRef, userEmail)')
-            .range(0, 7)
-            .order('id', { ascending: false })
-        setVideoList(videoList => [...videoList, ...data]);
-        console.log(data)
-        if (data) {
-            setLoading(false)
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('PostList')
+                .select('*,Users(username, name, profileImage),VideoLikes(postIdRef, userEmail)')
+                .range(0, 7)
+                .order('id', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching data:', error.message);
+                return;
+            }
+
+            if (data) {
+                setVideoList(videoList => [...videoList, ...data]);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error.message);
         }
     }
+
 
     const userLikeHandler = async (videoPost, isLike) => {
         if (!isLike) {

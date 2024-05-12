@@ -1,11 +1,25 @@
 import { View, Text, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useUser } from '@clerk/clerk-expo'
 import Colors from './../../Utils/Colors'
 import { Ionicons } from '@expo/vector-icons';
 
-export default function ProfileIntro() {
+export default function ProfileIntro({ postList }) {
     const { user } = useUser()
+    const [toatalPostLikes, setTotalPostLikes] = useState(0)
+
+    useEffect(() => {
+        calculateTotalLikes()
+    }, [postList])
+
+    const calculateTotalLikes = () => {
+        let totalLikes = 0
+        postList.forEach(element => {
+            console.log(element.VideoLikes?.length)
+            totalLikes = totalLikes + element.VideoLikes?.length
+        });
+        setTotalPostLikes(totalLikes)
+    }
     return (
         <View style={{ marginTop: 30 }}>
 
@@ -46,14 +60,14 @@ export default function ProfileIntro() {
                     <Text style={{
                         fontFamily: 'outfit-bold',
                         fontSize: 20
-                    }}>12 Post</Text>
+                    }}>{postList?.length} Post</Text>
                 </View>
                 <View style={{ padding: 20, alignItems: 'center' }}>
                     <Ionicons name="heart" size={24} color="black" />
                     <Text style={{
                         fontFamily: 'outfit-bold',
                         fontSize: 20
-                    }}>286286 Likes</Text>
+                    }}>{toatalPostLikes} Likes</Text>
                 </View>
             </View>
         </View>

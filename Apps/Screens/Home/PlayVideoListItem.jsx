@@ -11,11 +11,12 @@ export default function PlayVideoListItem({ video, activeIndex, index, userLikeH
     const [status, setStatus] = useState({});
     const BottomTabHeight = useBottomTabBarHeight();
 
-    // const ScreenHeight = Dimensions.get('window').height - BottomTabHeight;
-    const ScreenHeight = Dimensions.get('window').height;
+    console.log(BottomTabHeight)
+    const ScreenHeight = Dimensions.get('window').height - 17;
+    // const ScreenHeight = Dimensions.get('window').height-BottomTabHeight;
     const checkIsUserAlreadyLike = () => {
         const result = video.VideoLikes?.find(item => item.userEmail == user.primaryEmailAddress.emailAddress)
-        return result
+        return result;
     }
 
 
@@ -60,7 +61,9 @@ export default function PlayVideoListItem({ video, activeIndex, index, userLikeH
                             <Ionicons name="heart-outline" size={40} color="white" />
                         </TouchableHighlight>
                     }
-
+                    {/* <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
+                        <Ionicons name="heart" size={40} color="white" />
+                    </TouchableHighlight> */}
                     <Ionicons name="chatbubble-outline" size={35} color="white" />
                     <Ionicons name="paper-plane-outline" size={35} color="white" />
                 </View>
