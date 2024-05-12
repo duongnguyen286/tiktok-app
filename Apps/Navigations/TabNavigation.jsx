@@ -25,12 +25,12 @@ export default function TabNavigation() {
                     )
                 }}
             />
-            <Tab.Screen name='Search' component={SearchScreen}
+            {/* <Tab.Screen name='Search' component={SearchScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="search" size={size} color={color} />
                     )
-                }} />
+                }} /> */}
             <Tab.Screen name='Add' component={AddScreenNavigation}
                 options={{
                     tabBarIcon: ({ color, size }) => (

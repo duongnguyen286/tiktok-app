@@ -30,7 +30,7 @@ export default function PlayVideoList() {
         try {
             const { data, error } = await supabase
                 .from('PostList')
-                .select('*,Users(username, name, profileImage),VideoLikes(postIdRef, userEmail)')
+                .select('*,Users(username, name, profileImage, email),VideoLikes(postIdRef, userEmail)')
                 .range(0, 7)
                 .order('id', { ascending: false });
 
@@ -40,6 +40,7 @@ export default function PlayVideoList() {
             }
 
             if (data) {
+                console.log('Data', data);
                 setVideoList(videoList => [...videoList, ...data]);
                 setLoading(false);
             }
@@ -75,6 +76,7 @@ export default function PlayVideoList() {
             </TouchableOpacity>
             <FlatList
                 data={videoList}
+                showsVerticalScrollIndicator={false} // Ẩn thanh cuộn dọc
                 style={{ zIndex: -1 }}
                 pagingEnabled
                 onScroll={e => {

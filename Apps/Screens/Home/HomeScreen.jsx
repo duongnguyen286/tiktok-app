@@ -49,7 +49,7 @@ export default function HomeScreen() {
 
 
     return (
-        <View style={{ padding: 30, paddingTop: 35 }}>
+        <View style={{ padding: 20, paddingTop: 35 }}>
             <View style={{
                 display: 'flex', flexDirection: 'row',
                 justifyContent: 'space-between', alignItems: 'center'
@@ -62,12 +62,13 @@ export default function HomeScreen() {
             <View>
                 <FlatList
                     data={videoList}
+                    showsVerticalScrollIndicator={false}
                     numColumns={2}
                     style={{ display: 'flex' }}
                     onRefresh={GetLatestVideoList}
                     refreshing={loading}
                     onEndReached={() => setLoadCount(loadCount + 7)}
-                    onEndReachedThreshold={0.2}
+                    // onEndReachedThreshold={0.2}
                     renderItem={({ item, index }) => (
                         <VideoThumbnailItem video={item}
                             refreshData={console.log}

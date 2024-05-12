@@ -1,16 +1,16 @@
 import { View, Text, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useUser } from '@clerk/clerk-expo'
-import Colors from './../../Utils/Colors'
 import { Ionicons } from '@expo/vector-icons';
+import Colors from '../../Utils/Colors';
 
-export default function ProfileIntro({ postList }) {
-    const { user } = useUser()
-    const [toatalPostLikes, setTotalPostLikes] = useState(0)
+export default function OtherUserProfileIntro({ user, postList }) {
+    console.log("User data:", user);
 
     useEffect(() => {
-        calculateTotalLikes()
+        postList && calculateTotalLikes()
     }, [postList])
+
+    const [totalPostLikes, setTotalPostLikes] = useState(0)
 
     const calculateTotalLikes = () => {
         let totalLikes = 0
@@ -22,6 +22,7 @@ export default function ProfileIntro({ postList }) {
     }
 
     return (
+
         <View style={{ marginTop: 30 }}>
 
             <Text style={{
@@ -30,7 +31,7 @@ export default function ProfileIntro({ postList }) {
             }}>Profile</Text>
 
             <View style={{ alignItems: 'center' }}>
-                <Image source={{ uri: user.imageUrl }}
+                <Image source={{ uri: user.profileImage }}
                     style={{
                         width: 90,
                         height: 90,
@@ -40,13 +41,13 @@ export default function ProfileIntro({ postList }) {
                 <Text style={{
                     fontSize: 22,
                     fontFamily: 'outfit-medium'
-                }} >{user?.fullName}
+                }} >{user?.name}
                 </Text>
                 <Text style={{
                     fontSize: 17,
                     fontFamily: 'outfit',
                     color: Colors.BACKGROUND_TRANSNP
-                }} >{user?.primaryEmailAddress?.emailAddress}
+                }} >{user?.email}
                 </Text>
 
             </View>
@@ -68,7 +69,7 @@ export default function ProfileIntro({ postList }) {
                     <Text style={{
                         fontFamily: 'outfit-bold',
                         fontSize: 20
-                    }}>{toatalPostLikes} Likes</Text>
+                    }}>{totalPostLikes} Likes</Text>
                 </View>
             </View>
         </View>

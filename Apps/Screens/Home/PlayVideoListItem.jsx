@@ -1,22 +1,29 @@
-import { View, Text, StyleSheet, Dimensions, Image, Touchable } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Image, Touchable, TouchableOpacity } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { Video, ResizeMode } from 'expo-av';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import Colors from '../../Utils/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableHighlight } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 export default function PlayVideoListItem({ video, activeIndex, index, userLikeHandler, user }) {
     const videoRef = useRef(null);
     const [status, setStatus] = useState({});
     const BottomTabHeight = useBottomTabBarHeight();
-
-    console.log(BottomTabHeight)
+    const navigation = useNavigation()
+    // console.log(BottomTabHeight)
     const ScreenHeight = Dimensions.get('window').height - 17;
     // const ScreenHeight = Dimensions.get('window').height-BottomTabHeight;
     const checkIsUserAlreadyLike = () => {
         const result = video.VideoLikes?.find(item => item.userEmail == user.primaryEmailAddress.emailAddress)
         return result;
+    }
+
+    const onOtherUserProfileClick = (OtherUser) => {
+        navigation.navigate('other-user', {
+            user: OtherUser
+        })
     }
 
 
@@ -37,12 +44,14 @@ export default function PlayVideoListItem({ video, activeIndex, index, userLikeH
                         alignItems: 'center',
                         gap: 10
                     }}>
-                        <Image source={{ uri: video?.Users.profileImage }}
-                            style={{
-                                width: 40, height: 40,
-                                backgroundColor: Colors.WHILE, borderRadius: 99
-                            }}
-                        />
+                        <TouchableOpacity onPress={() => onOtherUserProfileClick(video.Users)}>
+                            <Image source={{ uri: video?.Users.profileImage }}
+                                style={{
+                                    width: 40, height: 40,
+                                    backgroundColor: Colors.WHILE, borderRadius: 99
+                                }}
+                            />
+                        </TouchableOpacity>
                         <Text style={{
                             fontFamily: 'outfit', fontSize: 16, color: Colors.WHILE
                         }}>{video.Users.name}</Text>
