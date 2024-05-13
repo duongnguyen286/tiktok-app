@@ -38,7 +38,7 @@ export default function ProfileScreen() {
             <FlatList
                 data={[{ id: 1 }]}
                 showsVerticalScrollIndicator={false} // Ẩn thanh cuộn dọc
-                onRefresh={() => GetUserPost()} // Khi người dùng kéo xuống, hàm getUserData sẽ được gọi để làm mới dữ liệu
+                onRefresh={() => GetUserPost()} // Khi người dùng kéo xuống, hàm GetUserPost sẽ được gọi để làm mới dữ liệu
                 refreshing={loading} // Khi loading là true, hiển thị trạng thái làm mới
                 renderItem={({ item, index }) => (
                     <View>

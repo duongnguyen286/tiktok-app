@@ -31,21 +31,43 @@ export default function HomeScreen() {
 
     }
 
+    // const GetLatestVideoList = async () => {
+    //     setLoading(true)
+    //     const { data, error } = await supabase
+    //         .from('PostList')
+    //         .select('*,Users(username, name, profileImage),VideoLikes(postIdRef, userEmail)')
+    //         .range(loadCount, loadCount + 7)
+    //         .order('id', { ascending: false })
+    //     setVideoList(videoList => [...videoList, ...data]);
+    //     console.log(data)
+    //     console.log(">>>", error)
+    //     if (data) {
+    //         setLoading(false)
+    //     }
+    // }
+    // // console.log(loadCount)
     const GetLatestVideoList = async () => {
-        setLoading(true)
+        setLoading(true);
         const { data, error } = await supabase
             .from('PostList')
-            .select('*,Users(username, name, profileImage)')
+            .select('*,Users(username, name, profileImage),VideoLikes(postIdRef, userEmail)')
             .range(loadCount, loadCount + 7)
-            .order('id', { ascending: false })
-        setVideoList(videoList => [...videoList, ...data]);
-        console.log(data)
-        console.log(">>>", error)
-        if (data) {
-            setLoading(false)
+            .order('id', { ascending: false });
+
+        if (error) {
+            console.log("Error fetching data:", error);
+            setLoading(false);
+            return;
         }
+
+        // Kiểm tra xem dữ liệu mới có trùng với dữ liệu hiện tại không
+        const newData = data.filter(item => !videoList.some(existingItem => existingItem.id === item.id));
+
+
+
+        setVideoList(prevList => [...prevList, ...newData]);
+        setLoading(false);
     }
-    // console.log(loadCount)
 
 
     return (
@@ -62,19 +84,18 @@ export default function HomeScreen() {
             <View>
                 <FlatList
                     data={videoList}
+                    keyExtractor={(item, index) => index.toString()} // Cung cấp key duy nhất
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
                     style={{ display: 'flex' }}
                     onRefresh={GetLatestVideoList}
                     refreshing={loading}
                     onEndReached={() => setLoadCount(loadCount + 7)}
-                    // onEndReachedThreshold={0.2}
                     renderItem={({ item, index }) => (
-                        <VideoThumbnailItem video={item}
-                            refreshData={console.log}
-                        />
+                        <VideoThumbnailItem video={item} refreshData={console.log} />
                     )}
                 />
+
             </View>
         </View>
     )

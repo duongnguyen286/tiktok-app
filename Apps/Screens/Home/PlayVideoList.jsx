@@ -20,10 +20,41 @@ export default function PlayVideoList() {
     const BottomTabHeight = useBottomTabBarHeight();
 
 
+    // useEffect(() => {
+    //     setVideoList([params.selectedVideo]);
+    //     GetLatestVideoList();
+    // }, [])
+
     useEffect(() => {
-        setVideoList([params.selectedVideo]);
+        if (params.selectedVideo) {
+            setVideoList([params.selectedVideo]);
+        }
         GetLatestVideoList();
     }, [])
+
+    // const GetLatestVideoList = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const { data, error } = await supabase
+    //             .from('PostList')
+    //             .select('*,Users(username, name, profileImage, email),VideoLikes(postIdRef, userEmail)')
+    //             .range(0, 7)
+    //             .order('id', { ascending: false });
+
+    //         if (error) {
+    //             console.error('Error fetching data:', error.message);
+    //             return;
+    //         }
+
+    //         if (data) {
+    //             console.log('Data', data);
+    //             setVideoList(videoList => [...videoList, ...data]);
+    //             setLoading(false);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error.message);
+    //     }
+    // }
 
     const GetLatestVideoList = async () => {
         setLoading(true);
@@ -41,14 +72,13 @@ export default function PlayVideoList() {
 
             if (data) {
                 console.log('Data', data);
-                setVideoList(videoList => [...videoList, ...data]);
+                setVideoList(prevList => [...prevList, ...data.filter(item => prevList.every(video => video.id !== item.id))]);
                 setLoading(false);
             }
         } catch (error) {
             console.error('Error fetching data:', error.message);
         }
     }
-
 
     const userLikeHandler = async (videoPost, isLike) => {
         if (!isLike) {
@@ -61,8 +91,15 @@ export default function PlayVideoList() {
             // console.log(error, data)
             GetLatestVideoList()
         }
+        else {
+            const { error } = await supabase
+                .from('VideoLikes')
+                .delete()
+                .eq('postIdRef', videoPost.id)
+                .eq('userEmail', user?.primaryEmailAddress.emailAddress)
+            GetLatestVideoList()
+        }
     }
-
 
 
     // console.log("dữ liệu>>>", videoList)

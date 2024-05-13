@@ -8,6 +8,15 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
 export default function PlayVideoListItem({ video, activeIndex, index, userLikeHandler, user }) {
+    const [liked, setLiked] = useState(false);
+    const handleLike = () => {
+        setLiked(!liked); // Đảo ngược trạng thái liked
+    };
+
+
+
+
+    ////////////////////////
     const videoRef = useRef(null);
     const [status, setStatus] = useState({});
     const BottomTabHeight = useBottomTabBarHeight();
@@ -15,6 +24,7 @@ export default function PlayVideoListItem({ video, activeIndex, index, userLikeH
     // console.log(BottomTabHeight)
     const ScreenHeight = Dimensions.get('window').height - 17;
     // const ScreenHeight = Dimensions.get('window').height-BottomTabHeight;
+
     const checkIsUserAlreadyLike = () => {
         const result = video.VideoLikes?.find(item => item.userEmail == user.primaryEmailAddress.emailAddress)
         return result;
@@ -61,18 +71,19 @@ export default function PlayVideoListItem({ video, activeIndex, index, userLikeH
                     }}>{video.description}</Text>
                 </View>
                 <View style={{ display: 'flex', gap: 15 }}>
-                    {checkIsUserAlreadyLike() ?
-                        <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
-                            <Ionicons name="heart" size={40} color="white" />
-                        </TouchableHighlight>
-                        :
-                        <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
-                            <Ionicons name="heart-outline" size={40} color="white" />
-                        </TouchableHighlight>
-                    }
-                    {/* <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
-                        <Ionicons name="heart" size={40} color="white" />
-                    </TouchableHighlight> */}
+                    <>
+                        {checkIsUserAlreadyLike() ?
+                            <TouchableHighlight onPress={() => userLikeHandler(video, true)}>
+                                <Ionicons name="heart" size={40} color="white" />
+                            </TouchableHighlight>
+                            :
+                            <TouchableHighlight onPress={() => userLikeHandler(video, false)}>
+                                <Ionicons name="heart-outline" size={40} color="white" />
+                            </TouchableHighlight>}
+                        <Text style={{ color: Colors.WHILE, textAlign: 'center', marginTop: -15 }}>
+                            {video?.VideoLikes?.length}
+                        </Text>
+                    </>
                     <Ionicons name="chatbubble-outline" size={35} color="white" />
                     <Ionicons name="paper-plane-outline" size={35} color="white" />
                 </View>

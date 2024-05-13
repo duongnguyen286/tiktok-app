@@ -21,7 +21,7 @@ export default function LoginScreen() {
 
             if (createdSessionId) {
                 setActive({ session: createdSessionId });
-                if (signUp?.emailAddress) {
+                if (signUp?.emailAddress) { // nếu có thông tin đăng ký (signUp), thì dữ liệu người dùng mới sẽ được thêm vào cơ sở dữ liệu thông qua Supabase
 
                     const { data, error } = await supabase
                         .from('Users')
@@ -40,7 +40,7 @@ export default function LoginScreen() {
 
                 }
             } else {
-                // Use signIn or signUp for next steps such as MFA
+                // 
             }
         } catch (err) {
             console.error("OAuth error", err);
